@@ -1,5 +1,7 @@
 using System;
+using SchoolApp.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolApp.Models
 {
@@ -26,6 +28,11 @@ namespace SchoolApp.Models
         [Required(ErrorMessage = "Please enter an email address.")]
         [EmailAddress(ErrorMessage = "Please enter a valid email, like ana@example.com.")]
         public string? Email { get; set; }
+        [Display(Name = "Confirm Email")]
+        [Required(ErrorMessage = "Please type the email again.")]
+        [NotMapped]
+        [Compare("Email", ErrorMessage = "Emails do not match.")]
+        public string? ConfirmEmail { get; set; }
 
         // Phone
         [Display(Name = "Phone Number")]
@@ -36,6 +43,9 @@ namespace SchoolApp.Models
                 [Range(16, 60, ErrorMessage = "Age must be from 16 to 60.")]
         public int? Age { get; set; }
 
+        [Display(Name = "Birth Date")]
+        [DataType(DataType.Date)]
+        [NotFutureDate(ErrorMessage = "Birth date can't be in the future.")]
         public DateTime? BirthDate { get; set; }
     }
 }

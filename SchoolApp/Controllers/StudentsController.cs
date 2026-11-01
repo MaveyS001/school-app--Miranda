@@ -54,8 +54,13 @@ namespace SchoolApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StudentId,StudentNo,Name,Email,Phone,Age,BirthDate")] Student student)
-        {
+        public async Task<IActionResult> Create([Bind("StudentId,StudentNo,Name,Email,ConfirmEmail,Phone,Age,BirthDate")] Student student)        {
+            
+            if (await _context.Student.AnyAsync(s => s.Email == student.Email))
+            {
+                ModelState.AddModelError("Email", "This email is already registered.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(student);
@@ -86,12 +91,19 @@ namespace SchoolApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentNo,Name,Email,Phone,Age,BirthDate")] Student student)
-        {
+        public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentNo,Name,Email,ConfirmEmail,Phone,Age,BirthDate")] Student student)        {
             if (id != student.StudentId)
             {
+                
                 return NotFound();
             }
+
+                
+            if (await _context.Student.AnyAsync(s => s.Email == student.Email && s.StudentId != student.StudentId))
+            {
+                ModelState.AddModelError("Email", "This email is already registered.");
+            }
+
 
             if (ModelState.IsValid)
             {
